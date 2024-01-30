@@ -61,3 +61,32 @@ def game_score(board, player_colour, end_scores_policy = END_SCORES, board_score
         score = eval_board_state(board, player_colour, board_scores_policy)
         
     return score
+
+# overall score of the current board state
+def eval_board_state(board, player_colour: bool, board_scores_policy: dict) -> float:
+    total_score = random()
+    # out of 100 ?
+    
+    for piece, score in board_scores_policy.items():
+        piece = getattr(chess, piece)
+        
+        true_score = len(board.pieces(piece, player_colour)) * score
+        false_score = len(board.pieces(piece, not player_colour)) *score * -1
+        
+        total_score += (true_score + false_score)
+        
+    return total_score
+
+# creates list of legal moves and maps to each piece
+def sorted_moves(board: Board) -> List[str]:
+    moves = list(board.legal_moves)
+    
+    squares = [NAME_TO_SQUARE[name] for name in map(square_name, moves)]
+    pieces = [board.piece_type_at(square) for square in squares]
+    
+    moves = sorted(zip(moves, pieces), key=lambda x: x[1], reverse= True)
+    
+    return moves
+
+if __name__ == "__main__":
+    test_board = chess.Board()
